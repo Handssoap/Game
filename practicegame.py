@@ -1,5 +1,5 @@
 import pygame
-
+#https://realpython.com/pygame-a-primer/#background-and-setup
 
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 600
