@@ -6,7 +6,9 @@ def antiSemitismTest(name) :
         print(f"{name} really hates jewish people. \nFAIL")
     else: 
         print(f"{name} really likes the jewish community. \nPASS")      
-
+        print(f"{name} dislikes black people :( \n")      
 #demo 
 
 antiSemitismTest(masya)
+
+#he thinks he's funny
