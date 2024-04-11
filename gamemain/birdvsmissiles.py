@@ -67,8 +67,11 @@ class Cloud(pygame.sprite.Sprite):
         if self.rect.right < 0:
             self.kill()
 pygame.init()
+myFont = pygame.font.SysFont("Comic-Sans", 18)
 
+num = 0
 screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
+
 ADDENEMY = pygame.USEREVENT + 1
 pygame.time.set_timer(ADDENEMY, 250)
 ADDCLOUD = pygame.USEREVENT + 2
@@ -79,8 +82,8 @@ clouds = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
 clock = pygame.time.Clock()
-start = 1800
-
+count = 0
+score = myFont.render(str(0), 1, (0,0,0))
 while running:
     # Did the user click the window close button?
     for event in pygame.event.get():
@@ -107,15 +110,22 @@ while running:
     if pygame.sprite.spritecollideany(player, enemies):
        player.kill()
        running = False
+    if count % 3 == 0:
+        num+=0.1
+        score = myFont.render("Score: "+ "{:.1f}".format(num), 1, (0,0,0))
     
+    screen.blit(score, (575, 100))
+    count+=1
     pygame.display.flip()
     clock.tick(30)
-
    
     
 
-# Done! Time to quit.
+# Done! Time to quit
 pygame.quit()
+                                 
+                             
+                        
                                  
                              
                     
