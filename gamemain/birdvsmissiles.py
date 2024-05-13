@@ -9,6 +9,12 @@ score = 0
 score_increment = 1
 running = True
 
+# Sound source: http://ccmixter.org/files/Apoxode/59262
+# License: https://creativecommons.org/licenses/by/3.0/
+pygame.mixer.init()
+pygame.mixer.music.load("Apoxode_-_Electric_1.mp3")
+pygame.mixer.music.play(loops=-1)
+
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
@@ -92,26 +98,74 @@ time_interval = 10
 #-----------FONT----------
 font = pygame.font.Font('PixelifySans-Regular.ttf', 48)
 
-while running:
-    # Did the user click the window close button?
+paused = False
 
+def pause_menu():
+    menu_items = ["Resume", "Toggle Music", "Quit"]
+    menu_color = (255, 255, 255)
+    hover_color = (200, 200, 200)
+    selected_color = (0, 0, 0)
+    menu_rects = []
+    for i, item in enumerate(menu_items):
+        text = font.render(item, True, menu_color)
+        text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + i * 50))
+        screen.blit(text, text_rect)
+        menu_rects.append(text_rect)
+    # Display menu items
+    
+
+    pygame.display.flip()
+    while True:
+       for event in pygame.event.get():
+            mouse_pos = pygame.mouse.get_pos()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for i, rect in enumerate(menu_rects):
+                   if pygame.Rect.collidepoint(rect, mouse_pos):
+                      return i
+
+def toggle_music():
+    if pygame.mixer_music.get_busy():
+        pygame.mixer_music.stop()
+    else:  
+      pygame.mixer_music.play()
+while running:
+    
     for event in pygame.event.get():
         pressed_keys = pygame.key.get_pressed()
         if event.type == pygame.KEYDOWN:
+            #press escape to pause game
             if event.key == pygame.K_ESCAPE:
-                running = False
-        elif event.type == ADDENEMY:
+                paused = not paused
+            # press 9 to close game
+            if event.key == pygame.K_9:
+               running = False
+        elif event.type == ADDENEMY and not paused:
             # Create the new enemy and add it to sprite groups
             new_enemy = Enemy()
             enemies.add(new_enemy)
             all_sprites.add(new_enemy)
-        elif event.type == ADDCLOUD:
+        elif event.type == ADDCLOUD and not paused:
            new_cloud = Cloud()
            clouds.add(new_cloud)
            all_sprites.add(new_cloud)
-    player.update(pressed_keys)
-    enemies.update()
-    clouds.update()
+    
+    if not paused:
+     player.update(pressed_keys)
+     enemies.update()
+     clouds.update()
+    if paused:
+       choice = pause_menu()
+       if choice == 0:  # Resume button clicked
+            paused = False
+            pygame.mixer.music.unpause()
+       elif choice == 1:  
+             toggle_music()
+       elif choice == 2: # Quit button clicked
+            running = False
+       continue
+     
+   
+    
 
     current_time = pygame.time.get_ticks() // 1000  # Current time in seconds
     # Check if it's time to change the speed
