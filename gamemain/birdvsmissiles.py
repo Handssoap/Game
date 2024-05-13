@@ -7,7 +7,8 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 score = 0
 score_increment = 1
-running = True
+
+continue_playing = True
 
 # Sound source: http://ccmixter.org/files/Apoxode/59262
 # License: https://creativecommons.org/licenses/by/3.0/
@@ -84,17 +85,7 @@ ADDENEMY = pygame.USEREVENT + 1
 pygame.time.set_timer(ADDENEMY, 250)
 ADDCLOUD = pygame.USEREVENT + 2
 pygame.time.set_timer(ADDCLOUD, 1000)
-player = Player()
-enemies = pygame.sprite.Group()
-clouds = pygame.sprite.Group()
-all_sprites = pygame.sprite.Group()
-all_sprites.add(player)
-clock = pygame.time.Clock()
-start = 1800
-clock = pygame.time.Clock()
-start_time = pygame.time.get_ticks()  # Get the start time in milliseconds
-elapsed_time = 0  # Initialize the elapsed time to 0
-time_interval = 10
+
 #-----------FONT----------
 font = pygame.font.Font('PixelifySans-Regular.ttf', 48)
 
@@ -103,8 +94,6 @@ paused = False
 def pause_menu():
     menu_items = ["Resume", "Toggle Music", "Quit"]
     menu_color = (255, 255, 255)
-    hover_color = (200, 200, 200)
-    selected_color = (0, 0, 0)
     menu_rects = []
     for i, item in enumerate(menu_items):
         text = font.render(item, True, menu_color)
@@ -128,10 +117,57 @@ def toggle_music():
         pygame.mixer_music.stop()
     else:  
       pygame.mixer_music.play()
-while running:
+def main_menu():
+    menu_items = ["New Game", "Quit"]
+    menu_color = (255, 255, 255)
+    menu_rects = []
+    for i, item in enumerate(menu_items):
+        text = font.render(item, True, menu_color)
+        text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + i * 50))
+        screen.blit(text, text_rect)
+        menu_rects.append(text_rect)
+    # Display menu items
     
+
+    pygame.display.flip()
+    while True:
+       for event in pygame.event.get():
+            mouse_pos = pygame.mouse.get_pos()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for i, rect in enumerate(menu_rects):
+                   if pygame.Rect.collidepoint(rect, mouse_pos):
+                      return i
+
+
+def new_game():
+ global running, score
+ running = True
+ score = 0
+ 
+ player = Player()
+ enemies = pygame.sprite.Group()
+ clouds = pygame.sprite.Group()
+ all_sprites = pygame.sprite.Group()
+ all_sprites.add(player)
+ clock = pygame.time.Clock()
+ start = 1800
+ clock = pygame.time.Clock()
+ start_time = pygame.time.get_ticks()  # Get the start time in milliseconds
+ elapsed_time = 0  # Initialize the elapsed time to 0
+ time_interval = 10  
+ start = True
+ paused = False
+ while running :
+    if start:
+        choices = main_menu()
+        if choices == 0:
+            start = False
+        elif choices == 1:
+            global continue_playing
+            continue_playing = False
+            running = False
+            
     for event in pygame.event.get():
-        pressed_keys = pygame.key.get_pressed()
         if event.type == pygame.KEYDOWN:
             #press escape to pause game
             if event.key == pygame.K_ESCAPE:
@@ -148,7 +184,7 @@ while running:
            new_cloud = Cloud()
            clouds.add(new_cloud)
            all_sprites.add(new_cloud)
-    
+    pressed_keys = pygame.key.get_pressed()
     if not paused:
      player.update(pressed_keys)
      enemies.update()
@@ -161,12 +197,10 @@ while running:
        elif choice == 1:  
              toggle_music()
        elif choice == 2: # Quit button clicked
+            continue_playing = False
             running = False
        continue
-     
-   
-    
-
+        
     current_time = pygame.time.get_ticks() // 1000  # Current time in seconds
     # Check if it's time to change the speed
     if current_time - elapsed_time >= time_interval:
@@ -196,20 +230,21 @@ while running:
         if enemy.rect.right < 0:
            score += 5
            enemy.kill()
-
     #display score 
     score_text = font.render(f'Score: {score}', True, (0, 0, 0))
     screen.blit(score_text, (10, 10))
-
-   
     pygame.display.flip()
     clock.tick(30)
 
-   
+while continue_playing:
+ new_game()
     
-
 # Done! Time to quit.
 pygame.quit()
+                                 
+                             
+                    
+
                                  
                              
                     
