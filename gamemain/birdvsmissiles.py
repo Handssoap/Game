@@ -7,6 +7,7 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 score = 0
 score_increment = 1
+<<<<<<< HEAD
 
 continue_playing = True
 
@@ -15,6 +16,11 @@ continue_playing = True
 pygame.mixer.init()
 pygame.mixer.music.load("Apoxode_-_Electric_1.mp3")
 pygame.mixer.music.play(loops=-1)
+=======
+running = True
+speed_low = 10
+speed_high = 15
+>>>>>>> 3ddd291 (bleh)
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -53,7 +59,7 @@ class Enemy(pygame.sprite.Sprite):
                 random.randint(0, SCREEN_HEIGHT),
             )
         )
-        self.speed = random.randint(5, 20)
+        self.speed = random.randint(speed_low, speed_high)
         
     def update(self):
         global score
@@ -206,7 +212,8 @@ def new_game():
     if current_time - elapsed_time >= time_interval:
         # Update the speed of all enemies
         for enemy in enemies:
-            enemy.speed += 5  # New random speed between 10 and 30
+            speed_low += 1
+            speed_high += 1  # New random speed +5
 
         # Update the last speed change time
         elapsed_time = current_time
@@ -225,6 +232,7 @@ def new_game():
        player.kill()
        running = False
        
+<<<<<<< HEAD
     #whem rocket passes left edge increment score
     for enemy in enemies: 
         if enemy.rect.right < 0:
@@ -233,6 +241,17 @@ def new_game():
     #display score 
     score_text = font.render(f'Score: {score}', True, (0, 0, 0))
     screen.blit(score_text, (10, 10))
+=======
+ 
+    #-------------SCORE---------------
+    #display score 
+    score_text = font.render(f'Score: {score}', True, (0, 0, 0))
+    screen.blit(score_text, ((SCREEN_WIDTH/2-100), 10))
+   
+    if current_time % 10.000000 == 0 & current_time != 0 : 
+        score +=1
+
+>>>>>>> 3ddd291 (bleh)
     pygame.display.flip()
     clock.tick(30)
 
